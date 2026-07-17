@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pantau Banjir RW 07 Kaligawe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <p class="brand-eyebrow">Sistem Peringatan Dini · KKN Tematik IDBU 67 Kel. 7</p>
+      <h1>Pantau Banjir RW 07 Kaligawe</h1>
+      <p class="subtitle">Data langsung dari sensor ultrasonik JSN-SR04T</p>
+    </div>
+    <div class="conn">
+      <span class="dot" id="connDot"></span>
+      <span id="connLabel">Menghubungkan…</span>
+    </div>
+  </header>
+
+  <div class="setup-banner" id="setupBanner">
+    ⚠ Endpoint belum diatur. Buka <code>script.js</code>, cari <code>WEBAPP_URL</code>,
+    lalu ganti dengan URL hasil deploy Google Apps Script kamu.
+  </div>
+
+  <div class="stale-banner" id="staleBanner">
+    ⚠ Data terakhir sudah lebih dari 10 menit lalu. Perangkat kemungkinan offline atau kehilangan sinyal WiFi.
+  </div>
+
+  <section class="hero">
+    <div class="card status-card">
+      <p class="eyebrow">Status Terkini</p>
+      <p class="status-word unknown" id="statusWord">MEMUAT…</p>
+      <p class="status-desc" id="statusDesc">Menunggu data pertama dari sensor.</p>
+      <div class="metric-row">
+        <div>
+          <p class="metric-label">Jarak ke permukaan air</p>
+          <p class="metric-value" id="jarakValue">— cm</p>
+        </div>
+        <div>
+          <p class="metric-label">Pembaruan terakhir</p>
+          <p class="metric-value" id="lastUpdate">—</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card gauge-card">
+      <svg width="110" height="180" viewBox="0 0 110 180">
+        <defs>
+          <clipPath id="tubeClip"><rect x="30" y="10" width="50" height="150" rx="25"/></clipPath>
+        </defs>
+        <rect x="30" y="10" width="50" height="150" rx="25" fill="var(--surface-2)" stroke="var(--border)" stroke-width="1.5"/>
+        <g clip-path="url(#tubeClip)">
+          <rect id="gaugeFill" x="30" y="160" width="50" height="0" fill="var(--text-dim)"/>
+        </g>
+        <circle class="ping" id="pingRing" cx="55" cy="15" r="12" fill="none" stroke="var(--accent)" stroke-width="2"/>
+        <circle cx="55" cy="15" r="3.5" fill="var(--accent)"/>
+      </svg>
+      <p class="gauge-caption">Tinggi relatif air, diskalakan dari riwayat yang termuat</p>
+    </div>
+  </section>
+
+  <section class="card chart-card">
+    <div class="chart-header">
+      <p class="eyebrow" style="margin:0;">Riwayat Jarak Sensor</p>
+      <div class="legend">
+        <span><i style="background:var(--aman)"></i>Aman</span>
+        <span><i style="background:var(--siaga)"></i>Siaga</span>
+        <span><i style="background:var(--bahaya)"></i>Bahaya</span>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="historyChart"></canvas></div>
+  </section>
+
+  <section class="card">
+    <p class="eyebrow">Log Pembacaan</p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Waktu</th><th>Jarak (cm)</th><th>Status</th></tr>
+        </thead>
+        <tbody id="logBody">
+          <tr><td colspan="3"><div class="empty-state">Memuat data…</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card settings-card">
+    <p class="eyebrow">Pengaturan Ambang Batas &amp; Interval</p>
+    <p class="settings-note">Tersimpan di server. Perangkat akan menyinkronkan nilai ini secara otomatis dalam beberapa menit — tidak perlu masuk captive portal lagi.</p>
+    <form id="settingsForm" class="settings-form">
+      <div class="field">
+        <label for="thAman">Batas Aman (cm)</label>
+        <input type="number" id="thAman" step="0.1" required>
+      </div>
+      <div class="field">
+        <label for="thSiaga">Batas Siaga (cm)</label>
+        <input type="number" id="thSiaga" step="0.1" required>
+      </div>
+      <div class="field">
+        <label for="thBahaya">Batas Bahaya (cm)</label>
+        <input type="number" id="thBahaya" step="0.1" required>
+      </div>
+      <div class="field">
+        <label for="intervalSec">Interval Deteksi (detik)</label>
+        <input type="number" id="intervalSec" step="1" min="10" required>
+      </div>
+      <button type="submit" id="saveSettingsBtn">Simpan Pengaturan</button>
+    </form>
+    <p class="settings-msg" id="settingsMsg"></p>
+  </section>
+
+  <footer>
+    Diperbarui otomatis setiap <span id="refreshLabel">30</span> detik · KKN Tematik IDBU 67 Kelompok 7, Kelurahan Kaligawe
+  </footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
